@@ -1,7 +1,7 @@
 SERVICES = monolith hello auth
 
-build: $(SERVICES)
-	go build -o bin/$< ./$</
+$(SERVICES):
+	go build --tags netgo --ldflags '-extldflags "-lm -lstdc++ -static"' -o ./$@/$@ ./$@/
 
 curl:
 	curl "http://127.0.0.1:10080"
@@ -11,3 +11,8 @@ login:
 
 token:
 	source token.sh
+
+clean:
+	$(foreach service,$(SERVICES),rm -vf $(service)/$(service))
+
+.PHONY: $(SERVICES)
